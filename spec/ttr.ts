@@ -1,5 +1,6 @@
 /* >>> boilerplate */
 import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
+import lodash from 'lodash';
 import { assertDeepEqual } from '../testing/helper';
 /* <<< boilerplate */
 
@@ -19,29 +20,69 @@ describe('TEST: True-Time Replay', () => {
 
 
   it('should return true-time replay Observable', () => {
-    const eventArray: KeyEvent[] = [
+    const eventHistoryArray: KeyEvent[] = [
       { key: 'A', timestamp: 100 },
       { key: 'B', timestamp: 120 },
       { key: 'C', timestamp: 150 },
       { key: 'D', timestamp: 160 },
       { key: 'E', timestamp: 200 }
     ];
-    const source$ = hot<KeyEvent[]>('---^a', { a: eventArray });
+    const source$ = hot<KeyEvent[]>('---^a', { a: eventHistoryArray });
     const marbles = '-A-B--CD---E';
     const values = { A: 'A', B: 'B', C: 'C', D: 'D', E: 'E' };
 
-    let initialTime: number;
     const test$ =
       source$
-        .do(objs => initialTime = objs[0].timestamp)
-        .map(objs => objs.map(obj => {
-          obj.timestamp = obj.timestamp - initialTime;
-          return obj;
-        }))
-        .mergeMap(objs => {
+        .map(objs => lodash.cloneDeep(objs))
+        .map(objs => {
+          const initialTime = objs[0].timestamp;
+          return objs.map(obj => {
+            obj.timestamp = obj.timestamp - initialTime;
+            return obj;
+          })
+        })
+        .switchMap(objs => {
           return Observable.range(0, objs.length)
             .delayWhen(x => Observable.interval(objs[x].timestamp, ts))
             .map(x => objs[x].key)
+        });
+
+    ts.expectObservable(test$).toBe(marbles, values);
+    ts.flush();
+  });
+
+
+  it('should return true-time replay Array-Observable', () => {
+    const eventHistoryArray: KeyEvent[] = [
+      { key: 'A', timestamp: 100 },
+      { key: 'B', timestamp: 120 },
+      { key: 'C', timestamp: 150 },
+      { key: 'D', timestamp: 160 },
+      { key: 'E', timestamp: 200 }
+    ];
+    const source$ = hot<KeyEvent[]>('---^a', { a: eventHistoryArray });
+    const marbles = '-A-B--CD---E';
+    const values = { A: ['A'], B: ['A', 'B'], C: ['A', 'B', 'C'], D: ['A', 'B', 'C', 'D'], E: ['A', 'B', 'C', 'D', 'E'] };
+
+    const test$ =
+      source$
+        .map(objs => lodash.cloneDeep(objs))
+        .map(objs => {
+          const initialTime = objs[0].timestamp;
+          return objs.map(obj => {
+            obj.timestamp = obj.timestamp - initialTime;
+            return obj;
+          })
+        })
+        .switchMap(objs => {
+          const array: string[] = [];
+          return Observable.range(0, objs.length)
+            .delayWhen(x => Observable.interval(objs[x].timestamp, ts))
+            .map(x => objs[x].key)
+            .map(value => {
+              array.push(value);
+              return lodash.cloneDeep(array);
+            });
         });
 
     ts.expectObservable(test$).toBe(marbles, values);
