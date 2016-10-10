@@ -1,5 +1,6 @@
 /* >>> boilerplate */
-import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
+import { TestScheduler } from 'rxjs/testing/TestScheduler';
 import { assertDeepEqual } from '../testing/helper';
 /* <<< boilerplate */
 
@@ -29,8 +30,8 @@ describe('TEST: RxJS Marble Test basics', () => {
 
 
   // it('should return correct observable', () => {
-  //   const source$ = cold<number>('a', { a: 1 });
-  //   const marbles = 'A';
+  //   const source$ = cold<number>('-a', { a: 1 });
+  //   const marbles = '-A';
   //   const values = { A: 1 };
   //   const test$ = mergeMapTest(source$);
   //   ts.expectObservable(test$).toBe(marbles, values);
@@ -105,5 +106,6 @@ function mapFilterTest(observable: Observable<number>): Observable<number> {
 
 function mergeMapTest(observable: Observable<number>): Observable<number> {
   return observable
-    .mergeMap(value => Promise.resolve(value));
+    .mergeMap(value => Promise.resolve(value))
+    .map(value => value)
 }

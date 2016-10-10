@@ -23,7 +23,7 @@
       ],
       "plugins": []
     },
-    "useCache": true,
+    "useCache": false,
     "useWebpackText": true,
     "doTypeCheck": false
   }
