@@ -26,8 +26,8 @@ describe('TEST: True-Time Replay', () => {
       { key: 'D', timestamp: 160 },
       { key: 'E', timestamp: 200 }
     ];
-    const source$ = cold<KeyEvent[]>('a', { a: eventArray });
-    const marbles = 'A-B--CD---E';
+    const source$ = hot<KeyEvent[]>('---^a', { a: eventArray });
+    const marbles = '-A-B--CD---E';
     const values = { A: 'A', B: 'B', C: 'C', D: 'D', E: 'E' };
 
     let initialTime: number;
