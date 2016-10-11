@@ -76,7 +76,7 @@ describe('TEST: True-Time Replay', () => {
         })
         .switchMap(objs => {
           return Observable.range(0, objs.length)
-            .delayWhen<number>(x => Observable.interval(objs[x].timestamp, ts))
+            .delayWhen(x => Observable.interval(objs[x].timestamp, ts))
             .map(x => objs[x].key)
             .scan((array, key) => [...array, key], []);
         });
