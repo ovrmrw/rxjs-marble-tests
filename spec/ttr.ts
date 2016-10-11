@@ -27,12 +27,12 @@ describe('TEST: True-Time Replay', () => {
       { key: 'D', timestamp: 160 },
       { key: 'E', timestamp: 200 }
     ];
-    const source$ = hot<KeyEvent[]>('---^a', { a: eventHistoryArray });
-    const marbles = '-A-B--CD---E';
+    const source$ = hot<KeyEvent[]>('---^a-----a', { a: eventHistoryArray });
+    const marbles = '-A-B--CA-B--CD---E';
     const values = { A: 'A', B: 'B', C: 'C', D: 'D', E: 'E' };
 
     const test$ =
-      source$
+      source$.asObservable()
         .map(objs => lodash.cloneDeep(objs))
         .map(objs => {
           const initialTime = objs[0].timestamp;
@@ -60,12 +60,12 @@ describe('TEST: True-Time Replay', () => {
       { key: 'D', timestamp: 160 },
       { key: 'E', timestamp: 200 }
     ];
-    const source$ = hot<KeyEvent[]>('---^a', { a: eventHistoryArray });
-    const marbles = '-A-B--CD---E';
+    const source$ = hot<KeyEvent[]>('---^a-----a', { a: eventHistoryArray });
+    const marbles = '-A-B--CA-B--CD---E';
     const values = { A: ['A'], B: ['A', 'B'], C: ['A', 'B', 'C'], D: ['A', 'B', 'C', 'D'], E: ['A', 'B', 'C', 'D', 'E'] };
 
     const test$ =
-      source$
+      source$.asObservable()
         .map(objs => lodash.cloneDeep(objs))
         .map(objs => {
           const initialTime = objs[0].timestamp;
@@ -75,14 +75,10 @@ describe('TEST: True-Time Replay', () => {
           })
         })
         .switchMap(objs => {
-          const array: string[] = [];
           return Observable.range(0, objs.length)
-            .delayWhen(x => Observable.interval(objs[x].timestamp, ts))
+            .delayWhen<number>(x => Observable.interval(objs[x].timestamp, ts))
             .map(x => objs[x].key)
-            .map(value => {
-              array.push(value);
-              return lodash.cloneDeep(array);
-            });
+            .scan((array, key) => [...array, key], []);
         });
 
     ts.expectObservable(test$).toBe(marbles, values);
