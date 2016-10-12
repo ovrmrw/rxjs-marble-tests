@@ -21,16 +21,16 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
   it('basic Redux pattern', (done) => {
     const results: number[] = [];
-    const actions$ = new Subject<Action>();
+    const actions$ = new Subject<Promise<number>>();
     const dispatcher$ = new Subject<number>();
     const provider$ = new BehaviorSubject<number>(0);
 
 
-    actions$
-      .map(action => new Promise<number>(resolve => {
-        setTimeout(() => resolve(action.value), action.delay);
-      }))
-      .concatMap(value => Observable.from(value).timeoutWith(100, Observable.of(-1))) // if time out, the value will be -1.
+    actions$.asObservable()
+      .concatMap(action => { // queues order by Action dispatch.
+        return Observable.from(action)
+          .timeoutWith(100, Observable.empty<number>()); // if time out, the value will be lost.
+      })
       .subscribe(value => {
         dispatcher$.next(value);
       });
@@ -52,14 +52,14 @@ describe('TEST: Resolving order associated with Actions order', () => {
       }, err => {
         /* error handling */
       }, () => { // when completed.
-        expect(results).toEqual([0, -1, 2, 3]);
+        expect(results).toEqual([0, 2, 3]);
         done();
       });
 
 
-    actions$.next({ value: 1, delay: 110 });
-    actions$.next({ value: 2, delay: 10 });
-    actions$.next({ value: 3, delay: 50 });
+    actions$.next(createAsyncAction(1, 110));
+    actions$.next(createAsyncAction(2, 50));
+    actions$.next(createAsyncAction(3, 10));
 
     setTimeout(() => {
       provider$.complete();
@@ -68,6 +68,19 @@ describe('TEST: Resolving order associated with Actions order', () => {
   });
 
 });
+
+
+function createAsyncAction<T>(value: T, delay: number): Promise<T> {
+  return new Promise<T>(resolve => {
+    setTimeout(() => resolve(value), delay);
+  });
+}
+
+
+interface Action {
+  value: number;
+  delay: number;
+}
 
 
 // function dispatchDelayedAction<T>(value: T, ms: number, dispatcher$: Subject<T>): Promise<void> {
@@ -85,9 +98,3 @@ describe('TEST: Resolving order associated with Actions order', () => {
 //     setTimeout(() => resolve(), ms);
 //   });
 // }
-
-
-interface Action {
-  value: number;
-  delay: number;
-}
