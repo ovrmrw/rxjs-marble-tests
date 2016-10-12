@@ -25,9 +25,9 @@ describe('TEST: Resolving order associated with Actions order', () => {
     const provider$ = new BehaviorSubject<number>(0);
 
     Observable
-      .zip<number>(...[
-        dispatcher$,
-        (value) => value
+      .zip(...[
+        dispatcher$, // reducer
+        (value): number => value // projection
       ])
       .subscribe(value => {
         provider$.next(value);
@@ -38,7 +38,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
         results.push(value);
       }, err => {
         /* error handling */
-      }, () => {
+      }, () => { // when completed.
         expect(results).toEqual([0, 1, 2, 3]);
         done();
       });
@@ -46,7 +46,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
     await dispatchDelayedAction(1, 100, dispatcher$);
     await dispatchDelayedAction(2, 10, dispatcher$);
     await dispatchDelayedAction(3, 50, dispatcher$);
-    await sleep(100);
+    // await sleep(100);
     provider$.complete();
   });
 
