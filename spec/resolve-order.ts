@@ -30,7 +30,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
       .map(action => new Promise<number>(resolve => {
         setTimeout(() => resolve(action.value), action.delay);
       }))
-      .concatMap(value => value) // queues order by Action dispatch.
+      .concatMap(value => Observable.from(value).timeoutWith(100, Observable.of(-1))) // if time out, the value will be -1.
       .subscribe(value => {
         dispatcher$.next(value);
       });
@@ -52,12 +52,12 @@ describe('TEST: Resolving order associated with Actions order', () => {
       }, err => {
         /* error handling */
       }, () => { // when completed.
-        expect(results).toEqual([0, 1, 2, 3]);
+        expect(results).toEqual([0, -1, 2, 3]);
         done();
       });
 
 
-    actions$.next({ value: 1, delay: 100 });
+    actions$.next({ value: 1, delay: 110 });
     actions$.next({ value: 2, delay: 10 });
     actions$.next({ value: 3, delay: 50 });
 
