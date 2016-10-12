@@ -1,6 +1,5 @@
 /* >>> boilerplate */
-import { Observable, Subject } from 'rxjs/Rx';
-import { TestScheduler } from 'rxjs/testing/TestScheduler';
+import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
 import { assertDeepEqual } from '../testing/helper';
 /* <<< boilerplate */
 
