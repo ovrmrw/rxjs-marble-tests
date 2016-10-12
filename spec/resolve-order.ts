@@ -30,7 +30,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
     Observable
       .zip<AppState>(...[
-        dispatcher$.scan<Action, number>((state, action) => { // reducer
+        dispatcher$.scan((state: number, action: Action) => { // reducer
           switch (action.type) {
             case 'SET':
               return action.payload;
@@ -47,7 +47,8 @@ describe('TEST: Resolving order associated with Actions order', () => {
       });
 
 
-    provider$
+    provider$.asObservable()
+      .share()
       .subscribe(appState => {
         results.push(appState);
       }, err => {
