@@ -1,65 +1,66 @@
-/* >>> boilerplate */
-import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
-import { assertDeepEqual } from '../testing/helper';
-/* <<< boilerplate */
-import { BehaviorSubject } from 'rxjs/Rx';
+import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 
 
 describe('TEST: Resolving order associated with Actions order', () => {
-  /* >>> boilerplate */
-  let ts: TestScheduler;
-  let hot: typeof TestScheduler.prototype.createHotObservable;
-  let cold: typeof TestScheduler.prototype.createColdObservable;
+  let initialState: AppState;
 
   beforeEach(() => {
-    ts = new TestScheduler(assertDeepEqual);
-    hot = ts.createHotObservable.bind(ts);
-    cold = ts.createColdObservable.bind(ts);
+    initialState = {
+      counter: 0
+    };
   });
-  /* <<< boilerplate */
 
 
   it('basic Redux pattern', (done) => {
-    const results: number[] = [];
-    const actions$ = new Subject<Promise<number>>();
-    const dispatcher$ = new Subject<number>();
-    const provider$ = new BehaviorSubject<number>(0);
+    const results: AppState[] = [];
+    const actions$ = new Subject<Promise<Action>>();
+    const dispatcher$ = new Subject<Action>();
+    const provider$ = new BehaviorSubject<AppState>(initialState);
 
 
     actions$.asObservable()
       .concatMap(action => { // queues order by Action dispatch.
         return Observable.from(action)
-          .timeoutWith(100, Observable.empty<number>()); // if time out, the value will be lost.
+          .timeoutWith(100, Observable.empty<Action>()); // if time out, the value will be lost.
       })
-      .subscribe(value => {
-        dispatcher$.next(value);
+      .subscribe(action => {
+        dispatcher$.next(action);
       });
 
 
     Observable
-      .zip(...[
-        dispatcher$, // reducer
-        (value): number => value // projection
+      .zip<AppState>(...[
+        dispatcher$.scan<Action, number>((state, action) => { // reducer
+          switch (action.type) {
+            case 'SET':
+              return action.payload;
+            default:
+              return state;
+          }
+        }, initialState.counter),
+        (counter): AppState => { // projection
+          return Object.assign({}, initialState, { counter });
+        }
       ])
-      .subscribe(value => {
-        provider$.next(value);
+      .subscribe(newState => {
+        provider$.next(newState);
       });
 
 
     provider$
-      .subscribe(value => {
-        results.push(value);
+      .subscribe(appState => {
+        results.push(appState);
       }, err => {
         /* error handling */
       }, () => { // when completed.
-        expect(results).toEqual([0, 2, 3]);
+        expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
         done();
       });
 
 
-    actions$.next(createAsyncAction(1, 110));
-    actions$.next(createAsyncAction(2, 50));
-    actions$.next(createAsyncAction(3, 10));
+    actions$.next(createAsyncAction({ type: 'SET', payload: 1 }, 110));
+    actions$.next(createAsyncAction({ type: 'SET', payload: 2 }, 50));
+    actions$.next(createAsyncAction({ type: 'SET', payload: 3 }, 10));
 
     setTimeout(() => {
       provider$.complete();
@@ -70,31 +71,23 @@ describe('TEST: Resolving order associated with Actions order', () => {
 });
 
 
-function createAsyncAction<T>(value: T, delay: number): Promise<T> {
-  return new Promise<T>(resolve => {
-    setTimeout(() => resolve(value), delay);
+function createAsyncAction(action: Action, delay: number): Promise<Action> {
+  return new Promise<Action>(resolve => {
+    setTimeout(() => resolve(action), delay);
   });
 }
 
 
-interface Action {
+interface AsyncAction {
   value: number;
   delay: number;
 }
 
+interface Action {
+  type: string;
+  payload: number;
+}
 
-// function dispatchDelayedAction<T>(value: T, ms: number, dispatcher$: Subject<T>): Promise<void> {
-//   return new Promise(resolve => {
-//     setTimeout(() => {
-//       dispatcher$.next(value);
-//       resolve();
-//     }, ms);
-//   });
-// }
-
-
-// function sleep(ms: number): Promise<void> {
-//   return new Promise(resolve => {
-//     setTimeout(() => resolve(), ms);
-//   });
-// }
+interface AppState {
+  counter: number;
+}
