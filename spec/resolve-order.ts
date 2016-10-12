@@ -19,10 +19,22 @@ describe('TEST: Resolving order associated with Actions order', () => {
   /* <<< boilerplate */
 
 
-  it('basic Redux pattern', async (done) => {
+  it('basic Redux pattern', (done) => {
     const results: number[] = [];
+    const actions$ = new Subject<Action>();
     const dispatcher$ = new Subject<number>();
     const provider$ = new BehaviorSubject<number>(0);
+
+
+    actions$
+      .map(action => new Promise<number>(resolve => {
+        setTimeout(() => resolve(action.value), action.delay);
+      }))
+      .concatMap(value => value) // queues order by Action dispatch.
+      .subscribe(value => {
+        dispatcher$.next(value);
+      });
+
 
     Observable
       .zip(...[
@@ -32,6 +44,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
       .subscribe(value => {
         provider$.next(value);
       });
+
 
     provider$
       .subscribe(value => {
@@ -43,28 +56,38 @@ describe('TEST: Resolving order associated with Actions order', () => {
         done();
       });
 
-    await dispatchDelayedAction(1, 100, dispatcher$);
-    await dispatchDelayedAction(2, 10, dispatcher$);
-    await dispatchDelayedAction(3, 50, dispatcher$);
-    // await sleep(100);
-    provider$.complete();
+
+    actions$.next({ value: 1, delay: 100 });
+    actions$.next({ value: 2, delay: 10 });
+    actions$.next({ value: 3, delay: 50 });
+
+    setTimeout(() => {
+      provider$.complete();
+    }, 100);
+
   });
 
 });
 
 
-function dispatchDelayedAction<T>(value: T, ms: number, dispatcher$: Subject<T>): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      dispatcher$.next(value);
-      resolve();
-    }, ms);
-  });
-}
+// function dispatchDelayedAction<T>(value: T, ms: number, dispatcher$: Subject<T>): Promise<void> {
+//   return new Promise(resolve => {
+//     setTimeout(() => {
+//       dispatcher$.next(value);
+//       resolve();
+//     }, ms);
+//   });
+// }
 
 
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(), ms);
-  });
+// function sleep(ms: number): Promise<void> {
+//   return new Promise(resolve => {
+//     setTimeout(() => resolve(), ms);
+//   });
+// }
+
+
+interface Action {
+  value: number;
+  delay: number;
 }
