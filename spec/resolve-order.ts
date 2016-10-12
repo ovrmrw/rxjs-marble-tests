@@ -38,6 +38,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
               return state;
           }
         }, initialState.counter),
+        
         (counter): AppState => { // projection
           return Object.assign({}, initialState, { counter });
         }
