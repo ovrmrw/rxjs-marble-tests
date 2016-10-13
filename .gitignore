@@ -38,4 +38,4 @@ jspm_packages
 
 .dest*
 .awcache*
-yarn.lock
+yarn.lock*
