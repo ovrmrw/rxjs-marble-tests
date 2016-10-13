@@ -1,5 +1,5 @@
-export * from './sample1';
-export * from './ttr';
-export * from './resolve-order';
+export * from './sample-1';
+export * from './truetime-replay';
+export * from './basic-redux-1';
 
 // export * from './forIssues/rc1-unexpected-behavior';
