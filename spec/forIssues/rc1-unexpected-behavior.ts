@@ -1,4 +1,6 @@
-import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 
 describe('TEST: Resolving order associated with Actions order', () => {
@@ -18,10 +20,11 @@ describe('TEST: Resolving order associated with Actions order', () => {
     const provider$ = new BehaviorSubject<AppState>(initialState);
 
 
-    actions$.asObservable()
-      .concatMap(action => { // queues order by Action dispatch.
+    actions$
+      .asObservable() // <--- if comment out, type of var action becomes "any" although that is exptected as "Action". 
+      .concatMap(action => {
         return Observable.from(action)
-          .timeoutWith(100, Observable.empty<Action>()); // if time out, the value will be lost.
+          .timeoutWith(100, Observable.empty<Action>());
       })
       .subscribe(action => {
         dispatcher$.next(action);
@@ -29,32 +32,36 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
 
     Observable
-      .zip<AppState>(...[
-        dispatcher$.asObservable().scan((state, action) => { // reducer
-          switch (action.type) {
-            case 'SET':
-              return action.payload;
-            default:
-              return state;
-          }
-        }, initialState.counter),
+      .zip<AppState>(
+        dispatcher$
+          .asObservable() // <--- if comment out, type of variables below 'state' and 'action' turns into "any" although they are exptected as "number" and "Action".
+          .scan((state, action) => {
+            switch (action.type) {
+              case 'SET':
+                return action.payload;
+              default:
+                return state;
+            }
+          }, initialState.counter),
 
-        (counter): AppState => { // projection
+        (counter): AppState => {
           return Object.assign({}, initialState, { counter });
         }
-      ])
+      )
       .subscribe(newState => {
         provider$.next(newState);
       });
 
 
-    provider$.asObservable()
+    provider$
+      .asObservable()  // <--- if comment out, type of variable becomes "any" although that is exptected as "AppState".      
       .share()
+      .do(appState => console.log(appState)) // <--- although variable type is exptected as "AppState", do operator breaks that.
       .subscribe(appState => {
         results.push(appState);
       }, err => {
-        /* error handling */
-      }, () => { // when completed.
+
+      }, () => {
         expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
         done();
       });
