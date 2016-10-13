@@ -80,11 +80,6 @@ function createAsyncAction(action: Action, delay: number): Promise<Action> {
 }
 
 
-interface AsyncAction {
-  value: number;
-  delay: number;
-}
-
 interface Action {
   type: string;
   payload: number;
