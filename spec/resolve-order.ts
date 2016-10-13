@@ -30,14 +30,15 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
     Observable
       .zip<AppState>(...[
-        dispatcher$.asObservable().scan((state, action) => { // reducer
-          switch (action.type) {
-            case 'SET':
-              return action.payload;
-            default:
-              return state;
-          }
-        }, initialState.counter),
+        dispatcher$.asObservable()
+          .scan((state, action) => { // reducer
+            switch (action.type) {
+              case 'SET':
+                return action.payload;
+              default:
+                return state;
+            }
+          }, initialState.counter),
 
         (counter): AppState => { // projection
           return Object.assign({}, initialState, { counter });
