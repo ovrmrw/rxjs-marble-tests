@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es5",
+    "module": "commonjs",
     "noImplicitAny": false,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictNullChecks": true,
@@ -14,17 +14,5 @@
   },
   "exclude": [
     "node_modules"
-  ],
-  "awesomeTypescriptLoaderOptions": {
-    "useBabel": true,
-    "babelOptions": {
-      "presets": [
-        "latest"
-      ],
-      "plugins": []
-    },
-    "useCache": false,
-    "useWebpackText": true,
-    "doTypeCheck": false
-  }
+  ]
 }

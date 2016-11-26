@@ -1,5 +1,5 @@
-import lodash from 'lodash';
-import assert from 'assert';
+import * as lodash from 'lodash';
+import * as assert from 'assert';
 
 
 export function assertDeepEqual(actual: any, exptected: any): void {

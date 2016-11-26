@@ -1,6 +1,6 @@
 /* >>> boilerplate */
-if (!global._babelPolyfill) {
-  require('babel-polyfill');
+if (!global.Zone) {
+  // require('babel-polyfill');
 
   require('zone.js/dist/zone-node');
   require('zone.js/dist/long-stack-trace-zone');

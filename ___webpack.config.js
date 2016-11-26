@@ -5,7 +5,6 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: ['./testing/main.js'],
-  target: 'node',
   output: {
     path: '.dest',
     filename: 'webpack.bundle.spec.js',

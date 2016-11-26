@@ -1,6 +1,6 @@
 /* >>> boilerplate */
 import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
-import lodash from 'lodash';
+import * as lodash from 'lodash';
 import { assertDeepEqual } from '../testing/helper';
 /* <<< boilerplate */
 
