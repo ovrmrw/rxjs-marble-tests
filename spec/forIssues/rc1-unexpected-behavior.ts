@@ -1,7 +1,7 @@
 import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 
 
-describe('TEST: Resolving order associated with Actions order', () => {
+xdescribe('TEST: Resolving order associated with Actions order', () => {
   let initialState: AppState;
 
   beforeEach(() => {

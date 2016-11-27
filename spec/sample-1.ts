@@ -49,6 +49,7 @@ describe('TEST: RxJS Marble Test basics', () => {
       () => {
         console.log('mergeMap', results);
         expect(results).toEqual([0, 10, 20]);
+        // assert.deepEqual(results, [0, 10, 20]);
         done();
       });
   });
@@ -65,6 +66,7 @@ describe('TEST: RxJS Marble Test basics', () => {
       () => {
         console.log('switchMap', results);
         expect(results).toEqual([20]);
+        // assert.deepEqual(results, [20]);
         done();
       });
   });
@@ -88,6 +90,7 @@ describe('TEST: RxJS Marble Test basics', () => {
       () => {
         console.log('timeoutWith', results);
         expect(results).toEqual([20]);
+        // assert.deepEqual(results, [20]);
         done();
       });
 

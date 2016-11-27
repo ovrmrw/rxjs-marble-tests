@@ -5,7 +5,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: ['./testing/main.js'],
-  target: 'node',
+  // target: 'node',
   output: {
     path: '.dest',
     filename: 'webpack.bundle.spec.js',
@@ -21,8 +21,8 @@ module.exports = {
         exclude: [/node_modules/],
         // loaders: ['awesome-typescript-loader?tsconfig=config/tsconfig.test-rxjs.json'],
         loaders: ['awesome-typescript-loader'],
-      },
+      }
     ]
   },
-  // devtool: 'inline-source-map',
+  devtool: 'inline-source-map',
 };

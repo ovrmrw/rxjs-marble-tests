@@ -9,10 +9,14 @@
     "strictNullChecks": true,
     "skipLibCheck": true,
     "lib": [
+      "dom",
       "es2017"
-    ]
+    ],
+    "sourceMap": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".dest*",
+    "spec/forIssues"
   ]
 }

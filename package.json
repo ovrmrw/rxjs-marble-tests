@@ -7,10 +7,13 @@
     "prebuild": "node build/clean-files.js",
     "build": "webpack",
     "build:w": "webpack -w",
-    "pretest": "npm run build",
-    "test": "concurrently -k \"npm run build:w\" \"npm run jasmine:w\" ",
+    "pretest": "tsc --outDir .dest",
+    "test": "concurrently -k \"npm run tsc:w\" \"npm run jasmine:w\" ",
     "jasmine": "gulp jasmine",
-    "jasmine:w": "gulp jasmine:w"
+    "jasmine:w": "gulp jasmine:w",
+    "mocha": "gulp mocha",
+    "mocha:w": "gulp mocha:w",
+    "tsc:w": "tsc --outDir .dest --watch"
   },
   "repository": {
     "type": "git",
@@ -24,22 +27,26 @@
   },
   "homepage": "https://github.com/ovrmrw/rxjs-marble-tests#readme",
   "dependencies": {
+    "core-js": "^2.4.1",
     "lodash": "^4.16.4",
     "rxjs": "^5.0.0-rc.4",
     "zone.js": "^0.7.2"
   },
   "devDependencies": {
     "@types/fs-extra": "0.0.33",
-    "@types/jasmine": "^2.5.35",
+    "@types/jasmine": "^2.5.38",
     "@types/lodash": "^4.14.37",
     "@types/node": "^6.0.45",
     "awesome-typescript-loader": "^2.2.4",
+    "chai": "^3.5.0",
     "concurrently": "^3.1.0",
     "fs-extra": "^0.30.0",
     "gulp": "^3.9.1",
     "gulp-jasmine": "^2.4.2",
+    "gulp-mocha": "^3.0.1",
     "gulp-plumber": "^1.1.0",
     "jasmine": "^2.5.2",
+    "mocha": "^3.2.0",
     "typescript": "^2.1.1",
     "webpack": "^1.13.2"
   }
