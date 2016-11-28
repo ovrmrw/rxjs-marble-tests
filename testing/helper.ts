@@ -1,5 +1,6 @@
 import * as lodash from 'lodash';
-import * as assert from 'assert';
+// import * as assert from 'assert';
+const assert = require('chai').assert;
 
 
 export function assertDeepEqual(actual: any, exptected: any): void {

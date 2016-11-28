@@ -1,6 +1,7 @@
 /* >>> boilerplate */
 import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
 import { assertDeepEqual } from '../testing/helper';
+import { assert } from 'chai';
 /* <<< boilerplate */
 
 
@@ -48,7 +49,8 @@ describe('TEST: RxJS Marble Test basics', () => {
       err => { },
       () => {
         console.log('mergeMap', results);
-        expect(results).toEqual([0, 10, 20]);
+        // expect(results).toEqual([0, 10, 20]);
+        assert.deepEqual(results, [0, 10, 20]);
         done();
       });
   });
@@ -64,7 +66,8 @@ describe('TEST: RxJS Marble Test basics', () => {
       err => { },
       () => {
         console.log('switchMap', results);
-        expect(results).toEqual([20]);
+        // expect(results).toEqual([20]);
+        assert.deepEqual(results, [20]);
         done();
       });
   });
@@ -87,7 +90,8 @@ describe('TEST: RxJS Marble Test basics', () => {
       err => { },
       () => {
         console.log('timeoutWith', results);
-        expect(results).toEqual([20]);
+        // expect(results).toEqual([20]);
+        assert.deepEqual(results, [20]);
         done();
       });
 

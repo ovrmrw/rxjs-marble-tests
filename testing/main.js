@@ -1,6 +1,6 @@
 /* >>> boilerplate */
 if (!global.Zone) {
-  // require('babel-polyfill');
+  require('core-js');
 
   require('zone.js/dist/zone-node');
   require('zone.js/dist/long-stack-trace-zone');
@@ -8,8 +8,8 @@ if (!global.Zone) {
   require('zone.js/dist/sync-test');
   require('zone.js/dist/async-test');
   require('zone.js/dist/fake-async-test');
-  require('zone.js/dist/jasmine-patch');
+  // require('zone.js/dist/mocha-patch');
 }
 
-require('../spec');
+// require('../spec');
 /* <<< boilerplate */

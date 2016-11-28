@@ -1,6 +1,7 @@
 'use strict';
 
 const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
 
 
 module.exports = {
@@ -9,9 +10,14 @@ module.exports = {
   output: {
     path: '.dest',
     filename: 'webpack.bundle.spec.js',
+    libraryTarget: 'commonjs2',
   },
+  externals: [
+    nodeExternals(),
+  ],
   resolve: {
-    extensions: ['', '.ts', '.js']
+    // extensions: ['', '.ts', '.js']
+    extensions: ['.ts', '.js']
   },
   plugins: [],
   module: {
@@ -19,10 +25,9 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: [/node_modules/],
-        // loaders: ['awesome-typescript-loader?tsconfig=config/tsconfig.test-rxjs.json'],
         loaders: ['awesome-typescript-loader'],
       },
     ]
   },
-  // devtool: 'inline-source-map',
+  // devtool: 'source-map',
 };

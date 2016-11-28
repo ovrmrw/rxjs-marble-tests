@@ -1,4 +1,5 @@
 import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
+import { assert } from 'chai';
 
 
 describe('TEST: Resolving order associated with Actions order', () => {
@@ -31,20 +32,20 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
     Observable
       .zip<AppState>(
-        dispatcher$
-          .asObservable() // <--- if comment out, type of variables below 'state' and 'action' turns into "any" although they are exptected as "number" and "Action".
-          .scan((state, action) => {
-            switch (action.type) {
-              case 'SET':
-                return action.payload;
-              default:
-                return state;
-            }
-          }, initialState.counter),
+      dispatcher$
+        .asObservable() // <--- if comment out, type of variables below 'state' and 'action' turns into "any" although they are exptected as "number" and "Action".
+        .scan((state, action) => {
+          switch (action.type) {
+            case 'SET':
+              return action.payload;
+            default:
+              return state;
+          }
+        }, initialState.counter),
 
-        (counter): AppState => {
-          return Object.assign({}, initialState, { counter });
-        }
+      (counter): AppState => {
+        return Object.assign({}, initialState, { counter });
+      }
       )
       .subscribe(newState => {
         provider$.next(newState);
@@ -60,7 +61,8 @@ describe('TEST: Resolving order associated with Actions order', () => {
       }, err => {
 
       }, () => {
-        expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
+        // expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
+        assert.deepEqual(results, [{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
         done();
       });
 

@@ -1,4 +1,5 @@
 import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
+import { assert } from 'chai';
 
 
 describe('TEST: Resolving order associated with Actions order', () => {
@@ -56,7 +57,8 @@ describe('TEST: Resolving order associated with Actions order', () => {
       }, err => {
         /* error handling */
       }, () => { // when completed.
-        expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
+        // expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
+        assert.deepEqual(results, [{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
         done();
       });
 
@@ -67,7 +69,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
     setTimeout(() => {
       provider$.complete();
-    }, 100);
+    }, 50);
 
   });
 
