@@ -10,8 +10,8 @@
     "test": "concurrently -k \"npm run mocha:w\" \"npm run tsc:w\" ",
     "tsc": "tsc --outDir .dest-test",
     "tsc:w": "tsc --outDir .dest-test --watch",
-    "mocha": "mocha --require testing/main .dest-test/**/*.js",
-    "mocha:w": "mocha --require testing/main .dest-test/**/*.js --watch"
+    "mocha": "mocha --require testing/polyfill .dest-test/**/*.js",
+    "mocha:w": "mocha --require testing/polyfill .dest-test/**/*.js --watch"
   },
   "repository": {
     "type": "git",
