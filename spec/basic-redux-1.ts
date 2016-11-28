@@ -1,5 +1,6 @@
 import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 import { assert } from 'chai';
+import { noop } from '../testing/helper';
 
 
 describe('TEST: Resolving order associated with Actions order', () => {
@@ -19,7 +20,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
     const provider$ = new BehaviorSubject<AppState>(initialState);
 
 
-    actions$.asObservable()
+    actions$
       .concatMap(action => { // queues order by Action dispatch.
         return Observable.from(action)
           .timeoutWith(100, Observable.empty<Action>()); // if time out, the value will be lost.
@@ -31,15 +32,14 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
     Observable
       .zip<AppState>(...[
-        dispatcher$.asObservable()
-          .scan((state, action) => { // reducer
-            switch (action.type) {
-              case 'SET':
-                return action.payload;
-              default:
-                return state;
-            }
-          }, initialState.counter),
+        dispatcher$.scan((state, action) => { // reducer
+          switch (action.type) {
+            case 'SET':
+              return action.payload;
+            default:
+              return state;
+          }
+        }, initialState.counter),
 
         (counter): AppState => { // projection
           return Object.assign({}, initialState, { counter });
@@ -50,14 +50,10 @@ describe('TEST: Resolving order associated with Actions order', () => {
       });
 
 
-    provider$.asObservable()
-      .share()
+    provider$
       .subscribe(appState => {
         results.push(appState);
-      }, err => {
-        /* error handling */
-      }, () => { // when completed.
-        // expect(results).toEqual([{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
+      }, noop, () => { // when completed.
         assert.deepEqual(results, [{ counter: 0 }, { counter: 2 }, { counter: 3 }]);
         done();
       });
@@ -69,7 +65,7 @@ describe('TEST: Resolving order associated with Actions order', () => {
 
     setTimeout(() => {
       provider$.complete();
-    }, 50);
+    }, 100);
 
   });
 

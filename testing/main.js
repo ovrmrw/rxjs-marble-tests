@@ -1,4 +1,3 @@
-/* >>> boilerplate */
 if (!global.Zone) {
   require('core-js');
 
@@ -10,6 +9,3 @@ if (!global.Zone) {
   require('zone.js/dist/fake-async-test');
   // require('zone.js/dist/mocha-patch');
 }
-
-// require('../spec');
-/* <<< boilerplate */

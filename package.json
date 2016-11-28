@@ -6,13 +6,12 @@
   "scripts": {
     "prebuild": "node build/clean-files.js",
     "build": "npm run tsc",
-    "build:w": "webpack -w",
     "pretest": "npm run build",
-    "test": "concurrently -k \"npm run tsc:w\" \"mocha -r testing/main .dest/**/*.js --watch\" ",
-    "jasmine": "gulp jasmine",
-    "jasmine:w": "gulp jasmine:w",
-    "tsc": "tsc --outDir .dest",
-    "tsc:w": "tsc --outDir .dest --watch"
+    "test": "concurrently -k \"npm run mocha:w\" \"npm run tsc:w\" ",
+    "tsc": "tsc --outDir .dest-test",
+    "tsc:w": "tsc --outDir .dest-test --watch",
+    "mocha": "mocha --require testing/main .dest-test/**/*.js",
+    "mocha:w": "mocha --require testing/main .dest-test/**/*.js --watch"
   },
   "repository": {
     "type": "git",
@@ -37,18 +36,10 @@
     "@types/lodash": "^4.14.37",
     "@types/mocha": "^2.2.33",
     "@types/node": "^6.0.45",
-    "awesome-typescript-loader": "^2.2.4",
     "chai": "^3.5.0",
     "concurrently": "^3.1.0",
-    "espower-loader": "^1.2.0",
     "fs-extra": "^0.30.0",
-    "gulp": "^3.9.1",
-    "gulp-jasmine": "^2.4.2",
-    "gulp-plumber": "^1.1.0",
-    "jasmine": "^2.5.2",
     "mocha": "^3.2.0",
-    "typescript": "^2.1.1",
-    "webpack": "^2.1.0-beta.27",
-    "webpack-node-externals": "^1.5.4"
+    "typescript": "^2.1.1"
   }
 }

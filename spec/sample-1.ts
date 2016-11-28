@@ -1,6 +1,6 @@
 /* >>> boilerplate */
 import { Observable, Subject, TestScheduler } from 'rxjs/Rx';
-import { assertDeepEqual } from '../testing/helper';
+import { assertDeepEqual, noop } from '../testing/helper';
 import { assert } from 'chai';
 /* <<< boilerplate */
 
@@ -21,10 +21,10 @@ describe('TEST: RxJS Marble Test basics', () => {
 
   it('should return correct observable', () => {
     const source$ = cold<number>('-a-b-c', { a: 1, b: 2, c: 3 });
-    const marbles = '---B-C';
+    const expected = '---B-C';
     const values = { A: 10, B: 20, C: 30 };
-    const test$ = mapFilterTest(source$);
-    ts.expectObservable(test$).toBe(marbles, values);
+    const actual$ = mapFilterTest(source$);
+    ts.expectObservable(actual$).toBe(expected, values);
     ts.flush();
   });
 
@@ -44,12 +44,10 @@ describe('TEST: RxJS Marble Test basics', () => {
     Observable.from([0, 1, 2])
       .mergeMap(value => Promise.resolve(value))
       .map(value => value * 10)
-      .subscribe(
-      value => results.push(value),
-      err => { },
-      () => {
+      .subscribe(value => {
+        results.push(value);
+      }, noop, () => {
         console.log('mergeMap', results);
-        // expect(results).toEqual([0, 10, 20]);
         assert.deepEqual(results, [0, 10, 20]);
         done();
       });
@@ -61,12 +59,10 @@ describe('TEST: RxJS Marble Test basics', () => {
     Observable.from([0, 1, 2])
       .switchMap(value => Promise.resolve(value))
       .map(value => value * 10)
-      .subscribe(
-      value => results.push(value),
-      err => { },
-      () => {
+      .subscribe(value => {
+        results.push(value);
+      }, noop, () => {
         console.log('switchMap', results);
-        // expect(results).toEqual([20]);
         assert.deepEqual(results, [20]);
         done();
       });
@@ -85,12 +81,10 @@ describe('TEST: RxJS Marble Test basics', () => {
       .from(promise)
       .timeoutWith(1000, Observable.of(2))
       .map(value => value * 10)
-      .subscribe(
-      value => results.push(value),
-      err => { },
-      () => {
+      .subscribe(value => {
+        results.push(value);
+      }, noop, () => {
         console.log('timeoutWith', results);
-        // expect(results).toEqual([20]);
         assert.deepEqual(results, [20]);
         done();
       });

@@ -1,6 +1,5 @@
 import * as lodash from 'lodash';
-// import * as assert from 'assert';
-const assert = require('chai').assert;
+import { assert } from 'chai';
 
 
 export function assertDeepEqual(actual: any, exptected: any): void {
@@ -14,3 +13,7 @@ export function assertDeepEqual(actual: any, exptected: any): void {
   }
   assert.deepEqual(actual, exptected, messages.join('\n'));
 }
+
+
+
+export function noop(): void { }
